@@ -96,6 +96,24 @@ app.layout = html.Div([
                 border: 1px solid #ccc;
                 border-radius: 5px;
             }
+            .citation-container {
+                margin-top: 20px;
+                text-align: left;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .citation-container p {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+            .citation-container a {
+                color: #007BFF;
+                text-decoration: none;
+            }
+            .citation-container a:hover {
+                text-decoration: underline;
+            }
         </style>
     """, dangerously_allow_html=True),
     html.H1("Sporulation Dashboard"),
@@ -111,7 +129,17 @@ app.layout = html.Div([
 #            html.A(file, href=f"/data/{file}", target="_blank", className="btn")
             html.A(file["display_name"], href=f"/data/{file['filename']}", target="_blank", className="btn")
         ) for file in files
-    ], className="button-container")
+    ], className="button-container"),
+    html.H2("Citation"),
+    html.Div([
+        dcc.Markdown("""
+            If you use this dashboard, please cite the following papers:
+
+            Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. "Draft genome of Bacillus subtilis strain YB955, prophage-cured derivative of strain 168." *Microbiol Resour Announc* 13:e00263-24. [https://doi.org/10.1128/mra.00263-24](https://doi.org/10.1128/mra.00263-24)
+
+            Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 2021. "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." *Front Microbiol* 12:625705. doi: [10.3389/fmicb.2021.625705](https://doi.org/10.3389/fmicb.2021.625705). PMID: 33603726; PMCID: PMC7885715.
+        """, className="citation-container")
+    ])
 ])
 
 # Callback to update plot based on gene search
