@@ -135,9 +135,9 @@ app.layout = html.Div([
         dcc.Markdown("""
             If you use this dashboard, please cite the following papers:
 
-            Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. "Draft genome of Bacillus subtilis strain YB955, prophage-cured derivative of strain 168." *Microbiol Resour Announc* 13:e00263-24. [https://doi.org/10.1128/mra.00263-24](https://doi.org/10.1128/mra.00263-24)
+            - Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. "Draft genome of Bacillus subtilis strain YB955, prophage-cured derivative of strain 168." *Microbiol Resour Announc* 13:e00263-24. [https://doi.org/10.1128/mra.00263-24](https://doi.org/10.1128/mra.00263-24)
 
-            Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 2021. "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." *Front Microbiol* 12:625705. doi: [10.3389/fmicb.2021.625705](https://doi.org/10.3389/fmicb.2021.625705). PMID: 33603726; PMCID: PMC7885715.
+            - Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 2021. "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." *Front Microbiol* 12:625705. doi: [10.3389/fmicb.2021.625705](https://doi.org/10.3389/fmicb.2021.625705). PMID: 33603726; PMCID: PMC7885715.
         """, className="citation-container")
     ])
 ])
