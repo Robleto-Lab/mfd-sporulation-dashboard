@@ -51,71 +51,117 @@ app.layout = html.Div([
     dcc.Markdown("""
         <style>
             body {
-                font-family: Arial, sans-serif;
-                text-align: center;
-                background-color: #f8f9fa;
-                margin: 20px;
-            }
-            h1 {
+                font-family: 'Roboto', Arial, sans-serif;
+                background-color: #f4f6f9;
+                margin: 0;
+                padding: 20px;
                 color: #333;
             }
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+                background-color: #fff;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                color: #1a3c6d;
+                font-size: 32px;
+                margin-bottom: 10px;
+                font-weight: 700;
+                text-align: center;
+            }
             h2 {
-                color: #555;
-                margin-top: 20px;
+                color: #2a5d9b;
+                font-size: 24px;
+                margin-top: 30px;
+                margin-bottom: 15px;
+                font-weight: 600;
+                text-align: center;
+            }
+            .search-container {
+                margin: 20px 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+            input[type="text"] {
+                padding: 10px;
+                font-size: 16px;
+                width: 350px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                outline: none;
+                transition: border-color 0.2s;
+            }
+            input[type="text"]:focus {
+                border-color: #1a3c6d;
+            }
+            label {
+                font-size: 16px;
+                color: #4b5e7e;
             }
             .button-container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
+                margin: 20px 0;
             }
             .btn {
                 display: block;
-                width: 300px;
-                margin-top: 10px;
-                padding: 8px 12px;
-                font-size: 14px;
+                width: 350px;
+                padding: 12px;
+                font-size: 16px;
                 cursor: pointer;
                 border: none;
-                background-color: #007BFF;
+                background-color: #1a3c6d;
                 color: white;
-                border-radius: 5px;
+                border-radius: 6px;
                 text-decoration: none;
                 text-align: center;
+                transition: background-color 0.2s;
             }
             .btn:hover {
-                background-color: #0056b3;
-            }
-            .search-container {
-                margin-bottom: 20px;
-            }
-            input[type="text"] {
-                padding: 8px;
-                font-size: 14px;
-                width: 300px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
+                background-color: #153057;
             }
             .citation-container {
-                margin-top: 20px;
+                margin-top: 30px;
                 text-align: left;
-                max-width: 600px;
+                max-width: 700px;
                 margin-left: auto;
                 margin-right: auto;
+                background-color: #f9fafb;
+                padding: 20px;
+                border-radius: 6px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
             .citation-container p {
                 font-size: 14px;
-                line-height: 1.6;
+                line-height: 1.7;
+                color: #4b5e7e;
             }
             .citation-container a {
-                color: #007BFF;
+                color: #1a3c6d;
                 text-decoration: none;
             }
             .citation-container a:hover {
                 text-decoration: underline;
             }
+            @media (max-width: 600px) {
+                .container {
+                    padding: 15px;
+                }
+                input[type="text"], .btn {
+                    width: 100%;
+                    max-width: 300px;
+                }
+            }
         </style>
     """, dangerously_allow_html=True),
+html.Div([
     html.H1("Sporulation Dashboard"),
     html.H2(f"n = {gene_count} genes"),
     html.Div([
@@ -140,6 +186,7 @@ app.layout = html.Div([
             - Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 2021. "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." *Front Microbiol* 12:625705. doi: [10.3389/fmicb.2021.625705](https://doi.org/10.3389/fmicb.2021.625705). PMID: 33603726; PMCID: PMC7885715.
         """, className="citation-container")
     ])
+  ], className="container")
 ])
 
 # Callback to update plot based on gene search
