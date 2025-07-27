@@ -166,7 +166,7 @@ html.Div([
     html.H2(f"n = {gene_count} genes"),
     html.Div([
         html.Label("Search Genes (comma-separated):"),
-        dcc.Input(id="gene-search", type="text", placeholder="e.g., cotC, spo0A", style={"marginLeft": "10px"}),
+        dcc.Input(id="gene-search", type="text", placeholder="e.g., cotC, spo0A"),
     ], className="search-container"),
     dcc.Graph(id="scatter-plot", figure=go.Figure(fig_dict)),
     html.H2("Data Files"),
