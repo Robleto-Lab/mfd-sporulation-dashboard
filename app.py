@@ -18,14 +18,14 @@ auth = BasicAuth(
 
 # List of files in data/
 files = [
-    "Summary_Stats_All_Sporulation_Genes.txt",
-    "Summary_Stats_Mfd-_Genes.txt",
-    "Summary_Stats_YB955_Genes.txt",
-    "Summary_Stats_Common_Genes_Genes.txt",
-    "Summary_Stats_Partial_Threshold_Genes.txt",
-    "Summary_Stats_Below_Threshold_Genes.txt",
-    "sporulation_CV_statistics.csv",
-    "gene_category_summary_table.csv"
+    {"filename":"Summary_Stats_All_Sporulation_Genes.txt", "display_name": "All Sporulation-Affected Genes"},
+    {"filename":"Summary_Stats_Mfd-_Genes.txt", "display_name": "Mfd- Genes"},
+    {"filename":"Summary_Stats_YB955_Genes.txt", "display_name": "YB955 Genes"},
+    {"filename":"Summary_Stats_Common_Genes_Genes.txt", "display_name": "Common Genes"},
+    {"filename":"Summary_Stats_Partial_Threshold_Genes.txt", "display_name": "Partial Threshold Genes"},
+    {"filename":"Summary_Stats_Below_Threshold_Genes.txt", "display_name": "Below Threshold Genes"},
+    {"filename":"sporulation_CV_statistics.csv", "display_name": "Sporulation CV Statistics"},
+    {"filename":"gene_category_summary_table.csv", "display_name": "Summary Table"}
 ]
 
 # Load Plotly figure from JSON
@@ -108,7 +108,8 @@ app.layout = html.Div([
     html.H2("Data Files"),
     html.Div([
         html.Div(
-            html.A(file, href=f"/data/{file}", target="_blank", className="btn")
+#            html.A(file, href=f"/data/{file}", target="_blank", className="btn")
+            html.A(file["display_name"], href=f"/data/{file['filename']}", target="_blank", className="btn")
         ) for file in files
     ], className="button-container")
 ])
