@@ -129,19 +129,20 @@ app.layout = html.Div([
             }
             .citation-container {
                 margin-top: 30px;
+                background-color: #e5e7eb;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                border: 1px solid #d1d5db;
                 text-align: left;
                 max-width: 700px;
                 margin-left: auto;
                 margin-right: auto;
-                background-color: #f9fafb;
-                padding: 20px;
-                border-radius: 6px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
             .citation-container p {
                 font-size: 14px;
                 line-height: 1.7;
-                color: #4b5e7e;
+                color: #374151;
             }
             .citation-container a {
                 color: #1a3c6d;
