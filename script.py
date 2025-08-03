@@ -14,8 +14,8 @@ data_output_dir = os.path.join(base_output_dir, "data")
 assets_output_dir = os.path.join(base_output_dir, "assets")
 
 # Threshold constants
-CV_THRESHOLD = 0.3
-RANGE_THRESHOLD = 1000
+CV_THRESHOLD = 0.11
+RANGE_THRESHOLD = 2000
 
 # Create output directories if they don't exist
 os.makedirs(data_output_dir, exist_ok=True)
@@ -352,6 +352,8 @@ def create_interactive_plot(df, title, filename, legend_x=0.95, legend_y=0.35, l
         else:
             trace.marker.size = 5
             trace.marker.opacity = 0.9
+
+    fig.write_html(filename, include_plotlyjs='cdn', full_html=True)
 
     # Save figure as JSON
     with open(filename.replace('.html', '.json'), 'w') as f:
