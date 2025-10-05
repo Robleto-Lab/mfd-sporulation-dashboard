@@ -19,52 +19,16 @@
             color: #555;
             margin-top: 20px;
         }
-        .search-container {
-            margin: 20px auto;
-            padding: 15px;
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            max-width: 600px;
-        }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 14px;
-            width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #plot-container {
+        /* Changed from iframe to div */
+        #plot-div {
             width: 90%;
             height: 600px;
-            margin: 20px auto;
-            background: white;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            margin: 0 auto 20px;
+            background: white;
         }
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .btn {
-            display: block;
-            width: 300px;
+        button {
+            margin-top: 10px;
             padding: 8px 12px;
             font-size: 14px;
             cursor: pointer;
@@ -72,208 +36,84 @@
             background-color: #007BFF;
             color: white;
             border-radius: 5px;
-            text-decoration: none;
-            text-align: center;
         }
-        .btn:hover {
+        button:hover {
             background-color: #0056b3;
         }
-        #status {
-            margin: 10px;
-            padding: 10px;
-            background: #e7f3ff;
-            border-radius: 5px;
-            color: #004085;
+        #visit-counter {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #777;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 3px 8px;
+            border-radius: 3px;
         }
-        .error {
-            background: #f8d7da !important;
-            color: #721c24 !important;
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
     </style>
 </head>
 <body>
     <h1>Mfd Sporulation Dashboard</h1>
-    
+
     <h2>All Sporulation-Related Genes (n = 503)</h2>
+    <!-- Changed from iframe to div -->
+    <div id="plot-div"></div>
+
+    <!--
+    <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
+    <iframe src="plots/GO_sporulation_genes_scatter_plot.html"></iframe>
+    -->
     
-    <div class="search-container">
-        <div>
-            <label>Search Genes (comma-separated): </label>
-            <input type="text" id="gene-search" placeholder="e.g., aag, arsB, cotC">
-            <button onclick="performSearch()">Search</button>
-            <button onclick="clearSearch()">Clear</button>
-        </div>
-        <div id="status" style="display: none;"></div>
-    </div>
-    
-    <div id="plot-container"></div>
-    
+     <!-- Centered button -->
     <div class="button-container">
-        <a class="btn" href="data/gene_category_summary_table.csv" target="_blank">Gene Category Summary Table</a>
+        <a class="btn" href="data/gene_category_summary_table.txt" target="_blank">Summary Table</a>
         <a class="btn" href="data/Summary_Stats_All_Sporulation_Genes.txt" target="_blank">All Sporulation-Related Genes</a>
         <a class="btn" href="data/Summary_Stats_YB955_Genes.txt" target="_blank">YB955 Genes</a>
         <a class="btn" href="data/Summary_Stats_Mfd-_Genes.txt" target="_blank">Mfd- Genes</a>
-        <a class="btn" href="data/Summary_Stats_Common_Genes_Genes.txt" target="_blank">Common Genes</a>
+        <a class="btn" href="data/Summary_Stats_Common_Genes.txt" target="_blank">Common Genes</a>
         <a class="btn" href="data/Summary_Stats_Partial_Threshold_Genes.txt" target="_blank">Partial Threshold Genes</a>
         <a class="btn" href="data/Summary_Stats_Below_Threshold_Genes.txt" target="_blank">Below Threshold Genes</a>
     </div>
 
+  
+    <!-- Citation Section -->
+    <h2>Citation</h2>
+    <p>If you use this dashboard, please cite the following papers:</p>
+    
+    <p><strong>Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. 
+    "Draft genome of <i>Bacillus subtilis</i> strain YB955, prophage-cured derivative of strain 168." 
+    <em>Microbiol Resour Announc</em> 13:e00263-24. 
+    <a href="https://doi.org/10.1128/mra.00263-24" target="_blank">https://doi.org/10.1128/mra.00263-24</a></strong></p>
+
+    <p><strong>Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 
+    "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." 
+    <em>Front Microbiol.</em> 2021 Jan 28;12:625705. doi: 10.3389/fmicb.2021.625705. PMID: 33603726; PMCID: PMC7885715.
+    <a href="https://doi.org/10.3389/fmicb.2021.625705" target="_blank">https://doi.org/10.3389/fmicb.2021.625705</a></strong></p>
+
+    <p><strong>Martin HA, Heron R, Leyva-Sanchez H, Perez RK, Callaway A, Ermi T, Picard A, Grifaldo J, Barnes JL, Pedraza-Reyes M and Robleto EA
+        (2025) Mfd deficiency decreases the abundance of complete transcripts of sporulation genes and alters sporogenesis and the structure of dormant Bacillus subtilis spores.
+        <em>Front. Microbiol.</em> 16:1680580. <a href="https://doi.org/10.3389/fmicb.2025.1680580" target="_blank">https://doi.org/10.3389/fmicb.2025.1680580</a></strong></p>
+
+    <!-- Added script to load JSON and render plot -->
     <script>
-        let plotData = null;
-        let originalData = null;
-        let validGenes = new Set();
-
-        // Load JSON file and render plot
-        async function loadPlot() {
-            try {
-                console.log('Loading plot data...');
-                const response = await fetch('assets/all_sporulation_genes_scatter_plot.json');
-                if (!response.ok) {
-                    throw new Error(`Failed to load plot data: ${response.status}`);
-                }
-                
-                plotData = await response.json();
-                originalData = JSON.parse(JSON.stringify(plotData)); // Deep copy for reset
-                
-                console.log('Plot data loaded, rendering...');
-                Plotly.newPlot('plot-container', plotData.data, plotData.layout);
-                
-                // Try to load gene list for validation
-                try {
-                    const geneResponse = await fetch('data/gene_list.json');
-                    if (geneResponse.ok) {
-                        const geneData = await geneResponse.json();
-                        validGenes = new Set(geneData.genes.map(g => g.toLowerCase()));
-                        console.log(`Loaded ${validGenes.size} valid genes for validation`);
-                    }
-                } catch (e) {
-                    console.log('Gene validation list not found, proceeding without validation');
-                }
-                
-                showStatus('Plot loaded successfully', false);
-                
-            } catch (error) {
+        // Load and render the plot from JSON
+        fetch('assets/all_sporulation_genes_scatter_plot.json')
+            .then(response => response.json())
+            .then(plotData => {
+                // Render the plot using Plotly
+                Plotly.newPlot('plot-div', plotData.data, plotData.layout);
+            })
+            .catch(error => {
                 console.error('Error loading plot:', error);
-                showStatus(`Error loading plot: ${error.message}`, true);
-                document.getElementById('plot-container').innerHTML = 
-                    '<div style="padding: 50px; color: red;">Failed to load plot data. Check console for details.</div>';
-            }
-        }
-
-        function showStatus(message, isError = false) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.style.display = 'block';
-            statusDiv.className = isError ? 'error' : '';
-            
-            if (!isError) {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 3000);
-            }
-        }
-
-        function performSearch() {
-            const searchInput = document.getElementById('gene-search').value;
-            
-            if (!plotData) {
-                showStatus('Plot data not loaded yet', true);
-                return;
-            }
-            
-            if (!searchInput.trim()) {
-                showStatus('Please enter gene names to search', true);
-                return;
-            }
-            
-            // Parse search input
-            const searchGenes = searchInput.split(',')
-                .map(g => g.trim().toLowerCase())
-                .filter(g => g.length > 0);
-            
-            console.log('Searching for:', searchGenes);
-            
-            // Create modified data for search
-            const modifiedData = JSON.parse(JSON.stringify(plotData.data));
-            const modifiedLayout = JSON.parse(JSON.stringify(plotData.layout));
-            
-            let matchedGenes = new Set();
-            let totalPoints = 0;
-            
-            // Process each trace
-            modifiedData.forEach(trace => {
-                if (!trace.customdata) return;
-                
-                // Create visibility arrays
-                const visibilityArray = [];
-                
-                trace.customdata.forEach(point => {
-                    const gene = (point[0] || '').toLowerCase();
-                    const matches = searchGenes.some(sg => gene.includes(sg));
-                    
-                    if (matches) {
-                        if (validGenes.size === 0 || validGenes.has(gene)) {
-                            visibilityArray.push(true);
-                            matchedGenes.add(gene);
-                            totalPoints++;
-                        } else {
-                            visibilityArray.push(false);
-                        }
-                    } else {
-                        visibilityArray.push(false);
-                    }
-                });
-                
-                // Hide points that don't match
-                if (trace.marker) {
-                    // Store original opacity if not already stored
-                    if (!trace.marker.originalOpacity) {
-                        trace.marker.originalOpacity = trace.marker.opacity || 1;
-                    }
-                    
-                    // Set opacity array
-                    trace.marker.opacity = visibilityArray.map(v => v ? trace.marker.originalOpacity : 0);
-                    
-                    // Make matching points slightly larger
-                    if (trace.marker.size) {
-                        const originalSize = Array.isArray(trace.marker.size) ? trace.marker.size[0] : trace.marker.size;
-                        trace.marker.size = visibilityArray.map(v => v ? originalSize * 1.2 : originalSize);
-                    }
-                }
+                document.getElementById('plot-div').innerHTML = 
+                    '<p style="padding: 50px; color: #666;">Error loading plot. Please check console for details.</p>';
             });
-            
-            // Update layout title
-            if (matchedGenes.size > 0) {
-                modifiedLayout.title = `All Sporulation-Affected Genes - Showing ${matchedGenes.size} matching genes (${totalPoints} points)`;
-                showStatus(`Found ${matchedGenes.size} genes matching your search`, false);
-            } else {
-                modifiedLayout.title = 'All Sporulation-Affected Genes - No matching genes found';
-                showStatus('No genes found matching your search', true);
-            }
-            
-            // Update the plot
-            Plotly.react('plot-container', modifiedData, modifiedLayout);
-        }
-
-        function clearSearch() {
-            document.getElementById('gene-search').value = '';
-            
-            if (!originalData) return;
-            
-            // Reset to original plot
-            Plotly.react('plot-container', originalData.data, originalData.layout);
-            showStatus('Search cleared', false);
-        }
-
-        // Allow Enter key to search
-        document.getElementById('gene-search').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-
-        // Load plot when page loads
-        document.addEventListener('DOMContentLoaded', loadPlot);
     </script>
 </body>
 </html>
