@@ -162,30 +162,34 @@
                     
                     plotDiv.data.forEach((trace, i) => {
                         if (trace.customdata) {
-                            // customdata length determines the number of points
+                            // Store original hovertemplate if not already stored
+                            if (!trace.originalHovertemplate) {
+                                trace.originalHovertemplate = trace.hovertemplate || '';
+                            }
+                            
                             const numPoints = trace.customdata.length;
                             const opacities = new Array(numPoints);
-                            const hoverinfo = new Array(numPoints);
+                            const hovertemplates = new Array(numPoints);
                             
                             for (let j = 0; j < numPoints; j++) {
                                 const gene = (trace.customdata[j][0] || '').toString().toLowerCase();
                                 const matches = searchGenes.some(sg => gene.includes(sg));
                                 
                                 if (matches) {
-                                    opacities[j] = 1; // Full visibility
-                                    hoverinfo[j] = 'all'; // Enable hover
+                                    opacities[j] = 1;
+                                    hovertemplates[j] = trace.originalHovertemplate; // Keep original hover
                                     matchedGenes.add(gene);
                                     totalMatches++;
                                 } else {
-                                    opacities[j] = 0; // Hidden
-                                    hoverinfo[j] = 'skip'; // Disable hover
+                                    opacities[j] = 0;
+                                    hovertemplates[j] = ''; // Empty string disables hover
                                 }
                             }
                             
-                            // Apply the restyle with both opacity and hoverinfo
+                            // Apply both opacity and hovertemplate
                             iframe.contentWindow.Plotly.restyle(plotDiv, {
                                 'marker.opacity': [opacities],
-                                'hoverinfo': [hoverinfo]
+                                'hovertemplate': [hovertemplates]
                             }, [i]);
                         }
                     });
