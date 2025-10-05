@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mfd Sporulation Dashboard</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,7 +18,44 @@
             color: #555;
             margin-top: 20px;
         }
-        iframe, #json-plot {
+        .search-container {
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-container input {
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+        .search-container button {
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+        .search-container button:hover {
+            background-color: #218838;
+        }
+        #clear-btn {
+            background-color: #6c757d;
+        }
+        #clear-btn:hover {
+            background-color: #5a6268;
+        }
+        iframe {
             width: 90%;
             height: 600px;
             border: 1px solid #ccc;
@@ -55,12 +91,10 @@
             align-items: center;
             gap: 10px;
         }
-        .toggle-button {
-            background-color: #28a745;
-            margin-bottom: 10px;
-        }
-        .toggle-button:hover {
-            background-color: #218838;
+        #search-status {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
         }
     </style>
 </head>
@@ -69,14 +103,16 @@
 
     <h2>All Sporulation-Related Genes (n = 503)</h2>
     
-    <!-- Toggle button to switch between HTML and JSON -->
-    <button class="toggle-button" onclick="toggleView()">Toggle HTML/JSON View</button>
+    <!-- Search container -->
+    <div class="search-container">
+        <label>Search Genes:</label>
+        <input type="text" id="gene-search" placeholder="e.g., aag, arsB, cotC">
+        <button onclick="highlightGenes()">Search</button>
+        <button id="clear-btn" onclick="clearHighlight()">Clear</button>
+        <div id="search-status"></div>
+    </div>
     
-    <!-- Original iframe for HTML file -->
-    <iframe id="html-plot" src="assets/all_sporulation_genes_scatter_plot.html"></iframe>
-    
-    <!-- New div for JSON plot (initially hidden) -->
-    <div id="json-plot" style="display: none;"></div>
+    <iframe id="plot-frame" src="assets/all_sporulation_genes_scatter_plot.html"></iframe>
 
     <!--
     <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
@@ -114,47 +150,120 @@
         <em>Front. Microbiol.</em> 16:1680580. <a href="https://doi.org/10.3389/fmicb.2025.1680580" target="_blank">https://doi.org/10.3389/fmicb.2025.1680580</a></strong></p>
 
     <script>
-        let jsonLoaded = false;
-        let currentView = 'html'; // Track which view is active
-        
-        // Function to load JSON plot
-        function loadJSONPlot() {
-            if (!jsonLoaded) {
-                fetch('assets/all_sporulation_genes_scatter_plot.json')
-                    .then(r => r.json())
-                    .then(d => {
-                        Plotly.newPlot('json-plot', d.data, d.layout);
-                        jsonLoaded = true;
-                    })
-                    .catch(e => {
-                        console.error('Error loading JSON:', e);
-                        document.getElementById('json-plot').innerHTML = 
-                            '<p style="padding: 50px; color: red;">Error loading JSON plot. Check console.</p>';
-                    });
+        // Allow Enter key to search
+        document.getElementById('gene-search').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                highlightGenes();
             }
-        }
-        
-        // Function to toggle between views
-        function toggleView() {
-            const htmlPlot = document.getElementById('html-plot');
-            const jsonPlot = document.getElementById('json-plot');
+        });
+
+        function highlightGenes() {
+            const searchInput = document.getElementById('gene-search').value.trim();
+            const statusDiv = document.getElementById('search-status');
             
-            if (currentView === 'html') {
-                // Switch to JSON view
-                htmlPlot.style.display = 'none';
-                jsonPlot.style.display = 'block';
-                loadJSONPlot(); // Load JSON if not already loaded
-                currentView = 'json';
-            } else {
-                // Switch back to HTML view
-                htmlPlot.style.display = 'block';
-                jsonPlot.style.display = 'none';
-                currentView = 'html';
+            if (!searchInput) {
+                statusDiv.textContent = 'Please enter gene names to search';
+                return;
+            }
+            
+            // Parse the search input
+            const searchGenes = searchInput.split(',').map(g => g.trim().toLowerCase());
+            
+            try {
+                const iframe = document.getElementById('plot-frame');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Try to access Plotly in the iframe
+                if (iframe.contentWindow.Plotly && iframe.contentWindow.Plotly._fullLayout) {
+                    statusDiv.textContent = `Searching for: ${searchGenes.join(', ')}`;
+                    
+                    // Get the plot div in the iframe
+                    const plotDiv = iframeDoc.querySelector('.plotly-graph-div') || 
+                                   iframeDoc.querySelector('[data-plotly]') ||
+                                   iframeDoc.querySelector('.plot-container') ||
+                                   iframeDoc.querySelector('.js-plotly-plot');
+                    
+                    if (plotDiv) {
+                        // Use Plotly's restyle to highlight points
+                        // This is a simple approach - make non-matching points transparent
+                        const data = plotDiv.data;
+                        const updateData = [];
+                        
+                        data.forEach((trace, i) => {
+                            if (trace._fullInput && trace._fullInput.customdata) {
+                                const opacities = [];
+                                trace._fullInput.customdata.forEach(point => {
+                                    const gene = (point[0] || '').toLowerCase();
+                                    const matches = searchGenes.some(sg => gene.includes(sg));
+                                    opacities.push(matches ? 1 : 0.1);
+                                });
+                                updateData.push({'marker.opacity': opacities});
+                            }
+                        });
+                        
+                        iframe.contentWindow.Plotly.restyle(plotDiv, updateData);
+                        statusDiv.textContent = `Highlighted genes matching: ${searchGenes.join(', ')}`;
+                    } else {
+                        statusDiv.textContent = 'Could not find plot in iframe';
+                    }
+                } else {
+                    statusDiv.textContent = 'Plotly not available in iframe - try the alternative method below';
+                    // Alternative: Try CSS-based highlighting
+                    highlightWithCSS(iframeDoc, searchGenes);
+                }
+            } catch (e) {
+                console.error('Search error:', e);
+                statusDiv.textContent = 'Search not available - plot may need to be loaded directly';
             }
         }
-        
-        // Optional: Auto-load JSON on page load (uncomment if you want JSON by default)
-        // document.addEventListener('DOMContentLoaded', loadJSONPlot);
+
+        function highlightWithCSS(iframeDoc, searchGenes) {
+            // Alternative method: Add CSS to dim non-matching points
+            const style = iframeDoc.createElement('style');
+            style.id = 'gene-highlight-style';
+            
+            // Remove any existing highlight styles
+            const existing = iframeDoc.getElementById('gene-highlight-style');
+            if (existing) existing.remove();
+            
+            // Add new style to reduce opacity of all points
+            style.textContent = `
+                .scatterlayer .trace .points path {
+                    opacity: 0.2 !important;
+                }
+            `;
+            iframeDoc.head.appendChild(style);
+            
+            document.getElementById('search-status').textContent = 
+                'Applied visual filter - note: this method dims all points';
+        }
+
+        function clearHighlight() {
+            const statusDiv = document.getElementById('search-status');
+            document.getElementById('gene-search').value = '';
+            
+            try {
+                const iframe = document.getElementById('plot-frame');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Remove CSS highlight if present
+                const highlightStyle = iframeDoc.getElementById('gene-highlight-style');
+                if (highlightStyle) highlightStyle.remove();
+                
+                // Try to reset Plotly
+                if (iframe.contentWindow.Plotly) {
+                    // Reload the iframe to fully reset
+                    iframe.src = iframe.src;
+                    statusDiv.textContent = 'Search cleared - plot reset';
+                } else {
+                    statusDiv.textContent = 'Search cleared';
+                }
+            } catch (e) {
+                // If we can't access the iframe, just reload it
+                document.getElementById('plot-frame').src = 'assets/all_sporulation_genes_scatter_plot.html';
+                statusDiv.textContent = 'Search cleared - plot reloaded';
+            }
+        }
     </script>
 </body>
 </html>
