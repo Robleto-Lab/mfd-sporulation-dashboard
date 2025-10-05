@@ -19,12 +19,11 @@
             color: #555;
             margin-top: 20px;
         }
-        /* Changed from iframe to div */
-        #plot-div {
+        iframe, #json-plot {
             width: 90%;
             height: 600px;
             border: 1px solid #ccc;
-            margin: 0 auto 20px;
+            margin-bottom: 20px;
             background: white;
         }
         button {
@@ -56,14 +55,28 @@
             align-items: center;
             gap: 10px;
         }
+        .toggle-button {
+            background-color: #28a745;
+            margin-bottom: 10px;
+        }
+        .toggle-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
     <h1>Mfd Sporulation Dashboard</h1>
 
     <h2>All Sporulation-Related Genes (n = 503)</h2>
-    <!-- Changed from iframe to div -->
-    <div id="plot-div"></div>
+    
+    <!-- Toggle button to switch between HTML and JSON -->
+    <button class="toggle-button" onclick="toggleView()">Toggle HTML/JSON View</button>
+    
+    <!-- Original iframe for HTML file -->
+    <iframe id="html-plot" src="assets/all_sporulation_genes_scatter_plot.html"></iframe>
+    
+    <!-- New div for JSON plot (initially hidden) -->
+    <div id="json-plot" style="display: none;"></div>
 
     <!--
     <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
@@ -100,20 +113,48 @@
         (2025) Mfd deficiency decreases the abundance of complete transcripts of sporulation genes and alters sporogenesis and the structure of dormant Bacillus subtilis spores.
         <em>Front. Microbiol.</em> 16:1680580. <a href="https://doi.org/10.3389/fmicb.2025.1680580" target="_blank">https://doi.org/10.3389/fmicb.2025.1680580</a></strong></p>
 
-    <!-- Added script to load JSON and render plot -->
     <script>
-        // Load and render the plot from JSON
-        fetch('assets/all_sporulation_genes_scatter_plot.json')
-            .then(response => response.json())
-            .then(plotData => {
-                // Render the plot using Plotly
-                Plotly.newPlot('plot-div', plotData.data, plotData.layout);
-            })
-            .catch(error => {
-                console.error('Error loading plot:', error);
-                document.getElementById('plot-div').innerHTML = 
-                    '<p style="padding: 50px; color: #666;">Error loading plot. Please check console for details.</p>';
-            });
+        let jsonLoaded = false;
+        let currentView = 'html'; // Track which view is active
+        
+        // Function to load JSON plot
+        function loadJSONPlot() {
+            if (!jsonLoaded) {
+                fetch('assets/all_sporulation_genes_scatter_plot.json')
+                    .then(r => r.json())
+                    .then(d => {
+                        Plotly.newPlot('json-plot', d.data, d.layout);
+                        jsonLoaded = true;
+                    })
+                    .catch(e => {
+                        console.error('Error loading JSON:', e);
+                        document.getElementById('json-plot').innerHTML = 
+                            '<p style="padding: 50px; color: red;">Error loading JSON plot. Check console.</p>';
+                    });
+            }
+        }
+        
+        // Function to toggle between views
+        function toggleView() {
+            const htmlPlot = document.getElementById('html-plot');
+            const jsonPlot = document.getElementById('json-plot');
+            
+            if (currentView === 'html') {
+                // Switch to JSON view
+                htmlPlot.style.display = 'none';
+                jsonPlot.style.display = 'block';
+                loadJSONPlot(); // Load JSON if not already loaded
+                currentView = 'json';
+            } else {
+                // Switch back to HTML view
+                htmlPlot.style.display = 'block';
+                jsonPlot.style.display = 'none';
+                currentView = 'html';
+            }
+        }
+        
+        // Optional: Auto-load JSON on page load (uncomment if you want JSON by default)
+        // document.addEventListener('DOMContentLoaded', loadJSONPlot);
     </script>
 </body>
 </html>
