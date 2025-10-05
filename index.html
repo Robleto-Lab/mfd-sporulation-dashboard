@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mfd Sporulation Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,15 +19,34 @@
             color: #555;
             margin-top: 20px;
         }
-        iframe {
+        .search-container {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            font-size: 14px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        #scatter-plot {
             width: 90%;
             height: 600px;
+            margin: 0 auto;
             border: 1px solid #ccc;
-            margin-bottom: 20px;
             background: white;
         }
-        button {
-            margin-top: 10px;
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            display: block;
+            width: 300px;
             padding: 8px 12px;
             font-size: 14px;
             cursor: pointer;
@@ -34,70 +54,231 @@
             background-color: #007BFF;
             color: white;
             border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
         }
-        button:hover {
+        .btn:hover {
             background-color: #0056b3;
         }
-        #visit-counter {
+        .citation-section {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: left;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .debug-info {
             position: fixed;
             bottom: 10px;
-            left: 10px;
-            font-size: 12px;
-            color: #777;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 3px 8px;
-            border-radius: 3px;
+            right: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 5px;
+            font-size: 11px;
+            color: #666;
+            display: none;
         }
-            .button-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
     </style>
-
 </head>
 <body>
     <h1>Mfd Sporulation Dashboard</h1>
 
-    <h2>All Sporulation-Related Genes (n = 503)</h2>
-    <iframe src="assets/all_sporulation_genes_scatter_plot.html"></iframe>
-
-    <!--
-    <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
-    <iframe src="plots/GO_sporulation_genes_scatter_plot.html"></iframe>
-    -->
+    <h2 id="gene-count">All Sporulation-Related Genes (n = 503)</h2>
     
-     <!-- Centered button -->
+    <div class="search-container">
+        <label for="gene-search">Search Genes (comma-separated):</label>
+        <input type="text" id="gene-search" placeholder="e.g., cotC, spo0A">
+    </div>
+    
+    <div id="scatter-plot"></div>
+    
+    <div class="debug-info" id="debug">Loading...</div>
+
+    <h2>Data Files</h2>
     <div class="button-container">
-        <a class="btn" href="data/gene_category_summary_table.txt" target="_blank">Summary Table</a>
+        <a class="btn" href="data/gene_category_summary_table.csv" target="_blank">Gene Category Summary Table</a>
         <a class="btn" href="data/Summary_Stats_All_Sporulation_Genes.txt" target="_blank">All Sporulation-Related Genes</a>
         <a class="btn" href="data/Summary_Stats_YB955_Genes.txt" target="_blank">YB955 Genes</a>
         <a class="btn" href="data/Summary_Stats_Mfd-_Genes.txt" target="_blank">Mfd- Genes</a>
-        <a class="btn" href="data/Summary_Stats_Common_Genes.txt" target="_blank">Common Genes</a>
+        <a class="btn" href="data/Summary_Stats_Common_Genes_Genes.txt" target="_blank">Common Genes</a>
         <a class="btn" href="data/Summary_Stats_Partial_Threshold_Genes.txt" target="_blank">Partial Threshold Genes</a>
         <a class="btn" href="data/Summary_Stats_Below_Threshold_Genes.txt" target="_blank">Below Threshold Genes</a>
+        <a class="btn" href="data/sporulation_CV_statistics.csv" target="_blank">Sporulation CV Statistics</a>
     </div>
 
-  
     <!-- Citation Section -->
-    <h2>Citation</h2>
-    <p>If you use this dashboard, please cite the following papers:</p>
-    
-    <p><strong>Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. 
-    "Draft genome of <i>Bacillus subtilis</i> strain YB955, prophage-cured derivative of strain 168." 
-    <em>Microbiol Resour Announc</em> 13:e00263-24. 
-    <a href="https://doi.org/10.1128/mra.00263-24" target="_blank">https://doi.org/10.1128/mra.00263-24</a></strong></p>
+    <div class="citation-section">
+        <h2>Citation</h2>
+        <p>If you use this dashboard, please cite the following papers:</p>
+        
+        <p><strong>Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. 
+        "Draft genome of <i>Bacillus subtilis</i> strain YB955, prophage-cured derivative of strain 168." 
+        <em>Microbiol Resour Announc</em> 13:e00263-24. 
+        <a href="https://doi.org/10.1128/mra.00263-24" target="_blank">https://doi.org/10.1128/mra.00263-24</a></strong></p>
 
-    <p><strong>Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 
-    "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." 
-    <em>Front Microbiol.</em> 2021 Jan 28;12:625705. doi: 10.3389/fmicb.2021.625705. PMID: 33603726; PMCID: PMC7885715.
-    <a href="https://doi.org/10.3389/fmicb.2021.625705" target="_blank">https://doi.org/10.3389/fmicb.2021.625705</a></strong></p>
+        <p><strong>Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 
+        "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." 
+        <em>Front Microbiol.</em> 2021 Jan 28;12:625705. doi: 10.3389/fmicb.2021.625705.</strong></p>
 
-    <p><strong>Martin HA, Heron R, Leyva-Sanchez H, Perez RK, Callaway A, Ermi T, Picard A, Grifaldo J, Barnes JL, Pedraza-Reyes M and Robleto EA
+        <p><strong>Martin HA, Heron R, Leyva-Sanchez H, Perez RK, Callaway A, Ermi T, Picard A, Grifaldo J, Barnes JL, Pedraza-Reyes M and Robleto EA
         (2025) Mfd deficiency decreases the abundance of complete transcripts of sporulation genes and alters sporogenesis and the structure of dormant Bacillus subtilis spores.
-        <em>Front. Microbiol.</em> 16:1680580. <a href="https://doi.org/10.3389/fmicb.2025.1680580" target="_blank">https://doi.org/10.3389/fmicb.2025.1680580</a></strong></p>
+        <em>Front. Microbiol.</em> 16:1680580.</strong></p>
+    </div>
 
-
+    <script>
+        // Global variables
+        let originalFigure = null;
+        let validGenes = new Set();
+        let originalTraceData = {};
+        
+        // Initialize
+        async function init() {
+            try {
+                console.log('Starting initialization...');
+                
+                // Load the plot JSON
+                const plotResponse = await fetch('assets/all_sporulation_genes_scatter_plot.json');
+                if (!plotResponse.ok) throw new Error('Failed to load plot data');
+                originalFigure = await plotResponse.json();
+                console.log('Plot data loaded:', originalFigure.data.length, 'traces');
+                
+                // Store original trace properties
+                originalFigure.data.forEach((trace, idx) => {
+                    originalTraceData[idx] = {
+                        opacity: trace.marker?.opacity || 1.0,
+                        size: trace.marker?.size || 6,
+                        hovertemplate: trace.hovertemplate || ''
+                    };
+                });
+                
+                // Load gene list for validation
+                try {
+                    const geneResponse = await fetch('data/gene_list.json');
+                    if (geneResponse.ok) {
+                        const geneData = await geneResponse.json();
+                        validGenes = new Set(geneData.genes.map(g => g.toLowerCase()));
+                        console.log('Loaded', validGenes.size, 'valid genes');
+                    }
+                } catch (e) {
+                    console.log('Gene validation list not found, proceeding without validation');
+                }
+                
+                // Initial plot
+                Plotly.newPlot('scatter-plot', originalFigure.data, originalFigure.layout);
+                console.log('Initial plot rendered');
+                
+                // Setup search
+                setupSearch();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                document.getElementById('scatter-plot').innerHTML = 
+                    '<p style="color: red; padding: 20px;">Error loading plot data. Check console for details.</p>';
+            }
+        }
+        
+        function setupSearch() {
+            const searchInput = document.getElementById('gene-search');
+            let debounceTimer;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    updatePlot(this.value);
+                }, 300);
+            });
+            
+            console.log('Search setup complete');
+        }
+        
+        function updatePlot(searchInput) {
+            console.log('Updating plot with search:', searchInput);
+            
+            if (!originalFigure) {
+                console.error('No figure data available');
+                return;
+            }
+            
+            // Create deep copy of figure data
+            const figData = JSON.parse(JSON.stringify(originalFigure.data));
+            const figLayout = JSON.parse(JSON.stringify(originalFigure.layout));
+            
+            if (searchInput && searchInput.trim()) {
+                // Parse search input
+                const searchGenes = searchInput.split(',')
+                    .map(g => g.trim().toLowerCase())
+                    .filter(g => g.length > 0);
+                
+                console.log('Searching for:', searchGenes);
+                const matchedGenes = new Set();
+                
+                // Process each trace
+                figData.forEach((trace, traceIdx) => {
+                    if (!trace.customdata || trace.customdata.length === 0) {
+                        console.log('Trace', traceIdx, 'has no customdata');
+                        return;
+                    }
+                    
+                    // Get original properties for this trace
+                    const origProps = originalTraceData[traceIdx];
+                    if (!origProps) {
+                        console.error('No original properties for trace', traceIdx);
+                        return;
+                    }
+                    
+                    // Initialize arrays for point properties
+                    const opacities = [];
+                    const sizes = [];
+                    const hovertemplates = [];
+                    
+                    // Check each point in this trace
+                    trace.customdata.forEach((pointData, pointIdx) => {
+                        const gene = (pointData[0] || '').toString().toLowerCase();
+                        
+                        // Check if this gene matches search
+                        const isMatch = searchGenes.some(searchGene => gene.includes(searchGene));
+                        const isValid = validGenes.size === 0 || validGenes.has(gene);
+                        
+                        if (isMatch && isValid) {
+                            // Highlight matching genes
+                            opacities.push(origProps.opacity);
+                            sizes.push(origProps.size * 1.5);
+                            hovertemplates.push(origProps.hovertemplate);
+                            matchedGenes.add(gene);
+                        } else {
+                            // Hide non-matching genes
+                            opacities.push(0);
+                            sizes.push(origProps.size);
+                            hovertemplates.push('');
+                        }
+                    });
+                    
+                    // Apply the arrays to the trace
+                    if (!trace.marker) trace.marker = {};
+                    trace.marker.opacity = opacities;
+                    trace.marker.size = sizes;
+                    trace.hovertemplate = hovertemplates;
+                });
+                
+                console.log('Matched', matchedGenes.size, 'genes:', Array.from(matchedGenes));
+                
+                // Update title
+                if (matchedGenes.size > 0) {
+                    figLayout.title = `All Sporulation-Affected Genes - Showing ${matchedGenes.size} matching genes`;
+                } else {
+                    figLayout.title = 'All Sporulation-Affected Genes - No matching genes found';
+                }
+            } else {
+                // Reset to original when search is empty
+                figLayout.title = 'All Sporulation-Affected Genes';
+            }
+            
+            // Update the plot
+            Plotly.react('scatter-plot', figData, figLayout);
+        }
+        
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
