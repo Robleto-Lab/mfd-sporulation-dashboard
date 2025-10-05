@@ -1,103 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mfd Sporulation Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f8f9fa;
-            margin: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        h2 {
-            color: #555;
-            margin-top: 20px;
-        }
-        iframe {
-            width: 90%;
-            height: 600px;
-            border: 1px solid #ccc;
-            margin-bottom: 20px;
-            background: white;
-        }
-        button {
-            margin-top: 10px;
-            padding: 8px 12px;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #visit-counter {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 12px;
-            color: #777;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 3px 8px;
-            border-radius: 3px;
-        }
-            .button-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mfd Sporulation Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f8f9fa;
+      margin: 20px;
+    }
+    h1 { color: #333; }
+    h2 { color: #555; margin-top: 20px; }
+    iframe {
+      width: 90%;
+      height: 600px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      background: white;
+    }
+    .btn, button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .btn:hover, button:hover { background-color: #0056b3; }
+    #visit-counter {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 12px;
+      color: #777;
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
 
+    /* Search UI */
+    .search-wrap {
+      width: 90%;
+      margin: 0 auto 24px auto;
+      text-align: left;
+      max-width: 1000px;
+    }
+    #search-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background: #fff;
+    }
+    #search-results {
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid #e2e2e2;
+      border-radius: 6px;
+      padding: 8px 12px;
+      max-height: 360px;
+      overflow: auto;
+    }
+    .result {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .result:last-child { border-bottom: none; }
+    .result a {
+      color: #0b5ed7;
+      text-decoration: none;
+    }
+    .result a:hover { text-decoration: underline; }
+    .muted { color: #666; font-size: 13px; }
+  </style>
 </head>
 <body>
-    <h1>Mfd Sporulation Dashboard</h1>
+  <h1>Mfd Sporulation Dashboard</h1>
 
-    <h2>All Sporulation-Related Genes (n = 503)</h2>
-    <iframe src="assets/all_sporulation_genes_scatter_plot.html"></iframe>
+  <!-- Search -->
+  <div class="search-wrap">
+    <input id="search-input" type="search" placeholder="Search genes, plots, pages… (e.g., 'sporulation', 'YB955')" aria-label="Search" />
+    <div id="search-results" aria-live="polite"></div>
+    <noscript>
+      <p class="muted">Enable JavaScript to use search.</p>
+    </noscript>
+  </div>
 
-    <!--
-    <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
-    <iframe src="plots/GO_sporulation_genes_scatter_plot.html"></iframe>
-    -->
-    
-     <!-- Centered button -->
-    <div class="button-container">
-        <a class="btn" href="data/gene_category_summary_table.txt" target="_blank">Summary Table</a>
-        <a class="btn" href="data/Summary_Stats_All_Sporulation_Genes.txt" target="_blank">All Sporulation-Related Genes</a>
-        <a class="btn" href="data/Summary_Stats_YB955_Genes.txt" target="_blank">YB955 Genes</a>
-        <a class="btn" href="data/Summary_Stats_Mfd-_Genes.txt" target="_blank">Mfd- Genes</a>
-        <a class="btn" href="data/Summary_Stats_Common_Genes.txt" target="_blank">Common Genes</a>
-        <a class="btn" href="data/Summary_Stats_Partial_Threshold_Genes.txt" target="_blank">Partial Threshold Genes</a>
-        <a class="btn" href="data/Summary_Stats_Below_Threshold_Genes.txt" target="_blank">Below Threshold Genes</a>
-    </div>
+  <h2>All Sporulation-Related Genes (n = 503)</h2>
+  <iframe src="assets/all_sporulation_genes_scatter_plot.html" title="All Sporulation Genes Plot"></iframe>
 
-  
-    <!-- Citation Section -->
-    <h2>Citation</h2>
-    <p>If you use this dashboard, please cite the following papers:</p>
-    
-    <p><strong>Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. 
-    "Draft genome of <i>Bacillus subtilis</i> strain YB955, prophage-cured derivative of strain 168." 
-    <em>Microbiol Resour Announc</em> 13:e00263-24. 
-    <a href="https://doi.org/10.1128/mra.00263-24" target="_blank">https://doi.org/10.1128/mra.00263-24</a></strong></p>
+  <!--
+  <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
+  <iframe src="plots/GO_sporulation_genes_scatter_plot.html"></iframe>
+  -->
 
-    <p><strong>Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 
-    "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." 
-    <em>Front Microbiol.</em> 2021 Jan 28;12:625705. doi: 10.3389/fmicb.2021.625705. PMID: 33603726; PMCID: PMC7885715.
-    <a href="https://doi.org/10.3389/fmicb.2021.625705" target="_blank">https://doi.org/10.3389/fmicb.2021.625705</a></strong></p>
+  <!-- Centered buttons -->
+  <div class="button-container">
+    <a class="btn" href="data/gene_category_summary_table.txt" target="_blank">Summary Table</a>
+    <a class="btn" href="data/Summary_Stats_All_Sporulation_Genes.txt" target="_blank">All Sporulation-Related Genes</a>
+    <a class="btn" href="data/Summary_Stats_YB955_Genes.txt" target="_blank">YB955 Genes</a>
+    <a class="btn" href="data/Summary_Stats_Mfd-_Genes.txt" target="_blank">Mfd- Genes</a>
+    <a class="btn" href="data/Summary_Stats_Common_Genes.txt" target="_blank">Common Genes</a>
+    <a class="btn" href="data/Summary_Stats_Partial_Threshold_Genes.txt" target="_blank">Partial Threshold Genes</a>
+    <a class="btn" href="data/Summary_Stats_Below_Threshold_Genes.txt" target="_blank">Below Threshold Genes</a>
+  </div>
 
-    <p><strong>Martin HA, Heron R, Leyva-Sanchez H, Perez RK, Callaway A, Ermi T, Picard A, Grifaldo J, Barnes JL, Pedraza-Reyes M and Robleto EA
-        (2025) Mfd deficiency decreases the abundance of complete transcripts of sporulation genes and alters sporogenesis and the structure of dormant Bacillus subtilis spores.
-        <em>Front. Microbiol.</em> 16:1680580. <a href="https://doi.org/10.3389/fmicb.2025.1680580" target="_blank">https://doi.org/10.3389/fmicb.2025.1680580</a></strong></p>
+  <!-- Citation Section -->
+  <h2>Citation</h2>
+  <p>If you use this dashboard, please cite the following papers:</p>
 
+  <p><strong>Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024.
+  "Draft genome of <i>Bacillus subtilis</i> strain YB955, prophage-cured derivative of strain 168."
+  <em>Microbiol Resour Announc</em> 13:e00263-24.
+  <a href="https://doi.org/10.1128/mra.00263-24" target="_blank" rel="noopener">https://doi.org/10.1128/mra.00263-24</a></strong></p>
 
+  <p><strong>Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA.
+  "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells."
+  <em>Front Microbiol.</em> 2021 Jan 28;12:625705. doi: 10.3389/fmicb.2021.625705. PMID: 33603726; PMCID: PMC7885715.
+  <a href="https://doi.org/10.3389/fmicb.2021.625705" target="_blank" rel="noopener">https://doi.org/10.3389/fmicb.2021.625705</a></strong></p>
+
+  <p><strong>Martin HA, Heron R, Leyva-Sanchez H, Perez RK, Callaway A, Ermi T, Picard A, Grifaldo J, Barnes JL, Pedraza-Reyes M and Robleto EA
+  (2025) Mfd deficiency decreases the abundance of complete transcripts of sporulation genes and alters sporogenesis and the structure of dormant Bacillus subtilis spores.
+  <em>Front. Microbiol.</em> 16:1680580. <a href="https://doi.org/10.3389/fmicb.2025.1680580" target="_blank" rel="noopener">https://doi.org/10.3389/fmicb.2025.1680580</a></strong></p>
+
+  <!-- Search scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <script>
+    (function () {
+      const input = document.getElementById('search-input');
+      const resultsEl = document.getElementById('search-results');
+
+      // If this is a project page (user.github.io/repo), relative path is safest:
+      const INDEX_URL = 'data/search.json';
+
+      let fuse = null;
+      let data = [];
+
+      function render(items) {
+        if (!items.length) {
+          resultsEl.innerHTML = '<p class="muted">No results.</p>';
+          return;
+        }
+        const html = items.slice(0, 30).map(r => {
+          const it = r.item || r; // allow plain array fallback
+          const snippet = (it.content || '').slice(0, 200).replace(/\s+/g, ' ');
+          const tags = (it.tags && it.tags.length) ? ` · <span class="muted">${it.tags.join(', ')}</span>` : '';
+          return `
+            <div class="result">
+              <a href="${it.url}"><strong>${it.title || it.url}</strong></a>${tags}
+              <div class="muted">${snippet}${it.content && it.content.length > 200 ? '…' : ''}</div>
+            </div>
+          `;
+        }).join('');
+        resultsEl.innerHTML = html;
+      }
+
+      function debounce(fn, ms) {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn(...args), ms);
+        };
+      }
+
+      async function init() {
+        try {
+          const res = await fetch(INDEX_URL, { cache: 'no-store' });
+          data = await res.json();
+          fuse = new Fuse(data, {
+            keys: ['title', 'content', 'tags'],
+            includeScore: true,
+            threshold: 0.3,
+            ignoreLocation: true,
+            minMatchCharLength: 2,
+          });
+        } catch (e) {
+          resultsEl.innerHTML = '<p class="muted">Search index not found. Make sure <code>data/search.json</code> exists.</p>';
+        }
+      }
+
+      input.addEventListener('input', debounce((e) => {
+        const q = e.target.value.trim();
+        if (!q) { resultsEl.innerHTML = ''; return; }
+        if (!fuse) { resultsEl.innerHTML = '<p class="muted">Loading search…</p>'; return; }
+        const out = fuse.search(q);
+        render(out);
+      }, 120));
+
+      init();
+    })();
+  </script>
 </body>
 </html>
