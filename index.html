@@ -20,21 +20,13 @@
         }
         iframe {
             width: 90%;
-            height: 650px;
+            height: 600px;
             border: 1px solid #ccc;
             margin-bottom: 20px;
             background: white;
-            border-radius: 5px;
         }
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn {
-            display: block;
-            width: 300px;
+        button {
+            margin-top: 10px;
             padding: 8px 12px;
             font-size: 14px;
             cursor: pointer;
@@ -42,77 +34,70 @@
             background-color: #007BFF;
             color: white;
             border-radius: 5px;
-            text-decoration: none;
-            text-align: center;
         }
-        .btn:hover {
+        button:hover {
             background-color: #0056b3;
         }
-        .info-box {
-            background-color: #d1ecf1;
-            border: 1px solid #bee5eb;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 10px auto 20px;
-            max-width: 600px;
-            color: #0c5460;
+        #visit-counter {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #777;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 3px 8px;
+            border-radius: 3px;
         }
-        .citation-section {
-            margin-top: 40px;
-            padding: 20px;
-            text-align: left;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .citation-section p {
-            margin: 10px 0;
-        }
+            .button-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
     </style>
+
 </head>
 <body>
     <h1>Mfd Sporulation Dashboard</h1>
 
     <h2>All Sporulation-Related Genes (n = 503)</h2>
-    
-    <div class="info-box">
-        💡 <strong>Interactive Search:</strong> Use the search box below to filter genes. 
-        Enter comma-separated gene names (e.g., cotC, spo0A) for real-time filtering.
-    </div>
-    
-    <!-- This iframe now loads the searchable version -->
-    <iframe src="assets/all_sporulation_genes_scatter_plot_searchable.html"></iframe>
+    <iframe src="assets/all_sporulation_genes_scatter_plot.html"></iframe>
 
-    <h2>Data Files</h2>
+    <!--
+    <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
+    <iframe src="plots/GO_sporulation_genes_scatter_plot.html"></iframe>
+    -->
+    
+     <!-- Centered button -->
     <div class="button-container">
-        <a class="btn" href="data/gene_category_summary_table.csv" target="_blank">Gene Category Summary Table</a>
+        <a class="btn" href="data/gene_category_summary_table.txt" target="_blank">Summary Table</a>
         <a class="btn" href="data/Summary_Stats_All_Sporulation_Genes.txt" target="_blank">All Sporulation-Related Genes</a>
         <a class="btn" href="data/Summary_Stats_YB955_Genes.txt" target="_blank">YB955 Genes</a>
         <a class="btn" href="data/Summary_Stats_Mfd-_Genes.txt" target="_blank">Mfd- Genes</a>
-        <a class="btn" href="data/Summary_Stats_Common_Genes_Genes.txt" target="_blank">Common Genes</a>
+        <a class="btn" href="data/Summary_Stats_Common_Genes.txt" target="_blank">Common Genes</a>
         <a class="btn" href="data/Summary_Stats_Partial_Threshold_Genes.txt" target="_blank">Partial Threshold Genes</a>
         <a class="btn" href="data/Summary_Stats_Below_Threshold_Genes.txt" target="_blank">Below Threshold Genes</a>
-        <a class="btn" href="data/sporulation_CV_statistics.csv" target="_blank">Sporulation CV Statistics (CSV)</a>
     </div>
 
+  
     <!-- Citation Section -->
-    <div class="citation-section">
-        <h2>Citation</h2>
-        <p>If you use this dashboard, please cite the following papers:</p>
-        
-        <p><strong>Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. 
-        "Draft genome of <i>Bacillus subtilis</i> strain YB955, prophage-cured derivative of strain 168." 
-        <em>Microbiol Resour Announc</em> 13:e00263-24. 
-        <a href="https://doi.org/10.1128/mra.00263-24" target="_blank">https://doi.org/10.1128/mra.00263-24</a></strong></p>
+    <h2>Citation</h2>
+    <p>If you use this dashboard, please cite the following papers:</p>
+    
+    <p><strong>Perez RK, Chavez Rios JS, Grifaldo J, Regner K, Pedraza-Reyes M, Robleto EA. 2024. 
+    "Draft genome of <i>Bacillus subtilis</i> strain YB955, prophage-cured derivative of strain 168." 
+    <em>Microbiol Resour Announc</em> 13:e00263-24. 
+    <a href="https://doi.org/10.1128/mra.00263-24" target="_blank">https://doi.org/10.1128/mra.00263-24</a></strong></p>
 
-        <p><strong>Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 
-        "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." 
-        <em>Front Microbiol.</em> 2021 Jan 28;12:625705. doi: 10.3389/fmicb.2021.625705. PMID: 33603726; PMCID: PMC7885715.
-        <a href="https://doi.org/10.3389/fmicb.2021.625705" target="_blank">https://doi.org/10.3389/fmicb.2021.625705</a></strong></p>
+    <p><strong>Martin HA, Sundararajan A, Ermi TS, Heron R, Gonzales J, Lee K, Anguiano-Mendez D, Schilkey F, Pedraza-Reyes M, Robleto EA. 
+    "Mfd Affects Global Transcription and the Physiology of Stressed Bacillus subtilis Cells." 
+    <em>Front Microbiol.</em> 2021 Jan 28;12:625705. doi: 10.3389/fmicb.2021.625705. PMID: 33603726; PMCID: PMC7885715.
+    <a href="https://doi.org/10.3389/fmicb.2021.625705" target="_blank">https://doi.org/10.3389/fmicb.2021.625705</a></strong></p>
 
-        <p><strong>Martin HA, Heron R, Leyva-Sanchez H, Perez RK, Callaway A, Ermi T, Picard A, Grifaldo J, Barnes JL, Pedraza-Reyes M and Robleto EA
+    <p><strong>Martin HA, Heron R, Leyva-Sanchez H, Perez RK, Callaway A, Ermi T, Picard A, Grifaldo J, Barnes JL, Pedraza-Reyes M and Robleto EA
         (2025) Mfd deficiency decreases the abundance of complete transcripts of sporulation genes and alters sporogenesis and the structure of dormant Bacillus subtilis spores.
         <em>Front. Microbiol.</em> 16:1680580. <a href="https://doi.org/10.3389/fmicb.2025.1680580" target="_blank">https://doi.org/10.3389/fmicb.2025.1680580</a></strong></p>
-    </div>
+
+
 </body>
 </html>
