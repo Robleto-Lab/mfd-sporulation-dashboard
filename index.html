@@ -75,16 +75,6 @@
         button:hover {
             background-color: #0056b3;
         }
-        #visit-counter {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 12px;
-            color: #777;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 3px 8px;
-            border-radius: 3px;
-        }
         .button-container {
             display: flex;
             flex-direction: column;
@@ -113,13 +103,8 @@
     </div>
     
     <iframe id="plot-frame" src="assets/all_sporulation_genes_scatter_plot.html"></iframe>
-
-    <!--
-    <h2>Gene Ontology (GO) Sporulation Genes (n = 101)</h2>
-    <iframe src="plots/GO_sporulation_genes_scatter_plot.html"></iframe>
-    -->
     
-     <!-- Centered button -->
+     <!-- Centered button container -->
     <div class="button-container">
         <a class="btn" href="data/gene_category_summary_table.txt" target="_blank">Summary Table</a>
         <a class="btn" href="data/Summary_Stats_All_Sporulation_Genes.txt" target="_blank">All Sporulation-Related Genes</a>
@@ -130,7 +115,6 @@
         <a class="btn" href="data/Summary_Stats_Below_Threshold_Genes.txt" target="_blank">Below Threshold Genes</a>
     </div>
 
-  
     <!-- Citation Section -->
     <h2>Citation</h2>
     <p>If you use this dashboard, please cite the following papers:</p>
@@ -166,103 +150,64 @@
                 return;
             }
             
-            // Parse the search input
             const searchGenes = searchInput.split(',').map(g => g.trim().toLowerCase());
             
             try {
                 const iframe = document.getElementById('plot-frame');
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const plotDiv = iframe.contentDocument.querySelector('.plotly-graph-div');
                 
-                // Try to access Plotly in the iframe
-                if (iframe.contentWindow.Plotly && iframe.contentWindow.Plotly._fullLayout) {
-                    statusDiv.textContent = `Searching for: ${searchGenes.join(', ')}`;
+                if (plotDiv && plotDiv.data) {
+                    let totalMatches = 0;
+                    let matchedGenes = new Set();
                     
-                    // Get the plot div in the iframe
-                    const plotDiv = iframeDoc.querySelector('.plotly-graph-div') || 
-                                   iframeDoc.querySelector('[data-plotly]') ||
-                                   iframeDoc.querySelector('.plot-container') ||
-                                   iframeDoc.querySelector('.js-plotly-plot');
-                    
-                    if (plotDiv) {
-                        // Use Plotly's restyle to highlight points
-                        // This is a simple approach - make non-matching points transparent
-                        const data = plotDiv.data;
-                        const updateData = [];
-                        
-                        data.forEach((trace, i) => {
-                            if (trace._fullInput && trace._fullInput.customdata) {
-                                const opacities = [];
-                                trace._fullInput.customdata.forEach(point => {
-                                    const gene = (point[0] || '').toLowerCase();
-                                    const matches = searchGenes.some(sg => gene.includes(sg));
-                                    opacities.push(matches ? 1 : 0.1);
-                                });
-                                updateData.push({'marker.opacity': opacities});
+                    plotDiv.data.forEach((trace, i) => {
+                        if (trace.customdata) {
+                            // customdata length determines the number of points
+                            const numPoints = trace.customdata.length;
+                            const opacities = new Array(numPoints);
+                            const hoverinfo = new Array(numPoints);
+                            
+                            for (let j = 0; j < numPoints; j++) {
+                                const gene = (trace.customdata[j][0] || '').toString().toLowerCase();
+                                const matches = searchGenes.some(sg => gene.includes(sg));
+                                
+                                if (matches) {
+                                    opacities[j] = 1; // Full visibility
+                                    hoverinfo[j] = 'all'; // Enable hover
+                                    matchedGenes.add(gene);
+                                    totalMatches++;
+                                } else {
+                                    opacities[j] = 0; // Hidden
+                                    hoverinfo[j] = 'skip'; // Disable hover
+                                }
                             }
-                        });
-                        
-                        iframe.contentWindow.Plotly.restyle(plotDiv, updateData);
-                        statusDiv.textContent = `Highlighted genes matching: ${searchGenes.join(', ')}`;
-                    } else {
-                        statusDiv.textContent = 'Could not find plot in iframe';
-                    }
-                } else {
-                    statusDiv.textContent = 'Plotly not available in iframe - try the alternative method below';
-                    // Alternative: Try CSS-based highlighting
-                    highlightWithCSS(iframeDoc, searchGenes);
+                            
+                            // Apply the restyle with both opacity and hoverinfo
+                            iframe.contentWindow.Plotly.restyle(plotDiv, {
+                                'marker.opacity': [opacities],
+                                'hoverinfo': [hoverinfo]
+                            }, [i]);
+                        }
+                    });
+                    
+                    statusDiv.textContent = matchedGenes.size > 0 
+                        ? `Found ${matchedGenes.size} unique genes (${totalMatches} points)` 
+                        : 'No matches found';
                 }
             } catch (e) {
                 console.error('Search error:', e);
-                statusDiv.textContent = 'Search not available - plot may need to be loaded directly';
+                statusDiv.textContent = 'Search error - check console';
             }
-        }
-
-        function highlightWithCSS(iframeDoc, searchGenes) {
-            // Alternative method: Add CSS to dim non-matching points
-            const style = iframeDoc.createElement('style');
-            style.id = 'gene-highlight-style';
-            
-            // Remove any existing highlight styles
-            const existing = iframeDoc.getElementById('gene-highlight-style');
-            if (existing) existing.remove();
-            
-            // Add new style to reduce opacity of all points
-            style.textContent = `
-                .scatterlayer .trace .points path {
-                    opacity: 0.2 !important;
-                }
-            `;
-            iframeDoc.head.appendChild(style);
-            
-            document.getElementById('search-status').textContent = 
-                'Applied visual filter - note: this method dims all points';
         }
 
         function clearHighlight() {
             const statusDiv = document.getElementById('search-status');
             document.getElementById('gene-search').value = '';
             
-            try {
-                const iframe = document.getElementById('plot-frame');
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                
-                // Remove CSS highlight if present
-                const highlightStyle = iframeDoc.getElementById('gene-highlight-style');
-                if (highlightStyle) highlightStyle.remove();
-                
-                // Try to reset Plotly
-                if (iframe.contentWindow.Plotly) {
-                    // Reload the iframe to fully reset
-                    iframe.src = iframe.src;
-                    statusDiv.textContent = 'Search cleared - plot reset';
-                } else {
-                    statusDiv.textContent = 'Search cleared';
-                }
-            } catch (e) {
-                // If we can't access the iframe, just reload it
-                document.getElementById('plot-frame').src = 'assets/all_sporulation_genes_scatter_plot.html';
-                statusDiv.textContent = 'Search cleared - plot reloaded';
-            }
+            // Just reload the iframe - simplest and most reliable
+            const iframe = document.getElementById('plot-frame');
+            iframe.src = iframe.src;
+            statusDiv.textContent = 'Search cleared - plot reset';
         }
     </script>
 </body>
